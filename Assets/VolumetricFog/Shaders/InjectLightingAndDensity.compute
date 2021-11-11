@@ -281,6 +281,7 @@ float4 getCascadeWeights_splitSpheres(float3 pos)
 float4 getShadowCoord(float3 pos, float4 cascadeWeights)
 {
 	return mul(_ShadowParams[0].worldToShadow[(int)dot(cascadeWeights, float4(1,1,1,1))], float4(pos, 1));
+	//return mul(_ShadowParams[0].worldToShadow[0], float4(pos, 1));//这样关闭级联阴影
 }
 #endif
 

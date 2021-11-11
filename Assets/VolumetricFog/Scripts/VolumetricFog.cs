@@ -506,16 +506,17 @@ public class VolumetricFog : MonoBehaviour
 	void Scatter()
 	{
 		// Inject lighting and density
-		int kernel = 0;
+		int kernel = m_InjectLightingAndDensity.FindKernel("CSMain") ;
 
 		SetUpForScatter(kernel);
 
 		m_InjectLightingAndDensity.Dispatch(kernel, m_VolumeResolution.x/m_InjectNumThreads.x, m_VolumeResolution.y/m_InjectNumThreads.y, m_VolumeResolution.z/m_InjectNumThreads.z);
 
+		int kernel1 = m_Scatter.FindKernel("CSMain");
 		// Solve scattering
-		m_Scatter.SetTexture(0, "_VolumeInject", m_VolumeInject);
-		m_Scatter.SetTexture(0, "_VolumeScatter", m_VolumeScatter);
-		m_Scatter.Dispatch(0, m_VolumeResolution.x/m_ScatterNumThreads.x, m_VolumeResolution.y/m_ScatterNumThreads.y, 1);
+		m_Scatter.SetTexture(kernel1, "_VolumeInject", m_VolumeInject);
+		m_Scatter.SetTexture(kernel1, "_VolumeScatter", m_VolumeScatter);
+		m_Scatter.Dispatch(kernel1, m_VolumeResolution.x/m_ScatterNumThreads.x, m_VolumeResolution.y/m_ScatterNumThreads.y, 1);
 	}
 
 	void DebugDisplay(RenderTexture src, RenderTexture dest)

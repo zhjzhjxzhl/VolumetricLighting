@@ -1,7 +1,7 @@
-#pragma kernel CSMain TUBE_LIGHTS TUBE_LIGHT_SHADOW_PLANES FOG_ELLIPSOIDS ANISOTROPY AREA_LIGHTS POINT_LIGHTS
+//#pragma kernel CSMain TUBE_LIGHTS TUBE_LIGHT_SHADOW_PLANES FOG_ELLIPSOIDS ANISOTROPY AREA_LIGHTS POINT_LIGHTS
 
 // Directional light support not quite ready yet
-// #pragma kernel CSMain TUBE_LIGHTS TUBE_LIGHT_SHADOW_PLANES FOG_ELLIPSOIDS ANISOTROPY AREA_LIGHTS POINT_LIGHTS DIR_LIGHT
+#pragma kernel CSMain TUBE_LIGHTS TUBE_LIGHT_SHADOW_PLANES FOG_ELLIPSOIDS ANISOTROPY AREA_LIGHTS POINT_LIGHTS DIR_LIGHT DIR_LIGHT_SHADOWS
 
 #define TUBE_LIGHT_ATTENUATION_LEGACY 1
 #include "..\..\TubeLight\Shaders\TubeLightAttenuation.cginc"
@@ -241,7 +241,7 @@ float anisotropy(float costheta)
 	float denom = 1 + gsq - 2.0 * g * costheta;
 	denom = denom * denom * denom;
 	denom = sqrt(max(0, denom));
-	return (1 - gsq) / denom;
+	return (1 - gsq) / denom;//这里没有最后除以4Pi，这个无所谓，只是影响强度而已
 }
 #endif
 
@@ -299,7 +299,7 @@ float3 DirectionalLight(float3 pos)
 		float3 samplePos = getShadowCoord(pos, cascadeWeights).xyz;
 		//occlusion += inside ? UNITY_SAMPLE_SHADOW(u_CascadedShadowMap, samplePos) : 1.f;
 		#if 1
-		att *= _DirectionalShadowmap.SampleLevel(sampler_DirectionalShadowmap, samplePos.xy, 0).r > samplePos.z;
+		att *= _DirectionalShadowmap.SampleLevel(sampler_DirectionalShadowmap, samplePos.xy, 0).r < samplePos.z;
 		#else
 		float2 shadowmap = _DirectionalShadowmap.SampleLevel(sampler_DirectionalShadowmap, samplePos, 0).xy;
 		att *= ChebyshevUpperBound(shadowmap.xy, samplePos.z);

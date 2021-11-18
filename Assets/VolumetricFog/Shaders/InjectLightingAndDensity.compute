@@ -85,6 +85,7 @@ StructuredBuffer<TubeLightShadowPlane> _TubeLightShadowPlanes;
 
 #endif // TUBE_LIGHTS
 
+
 #ifdef AREA_LIGHTS
 struct AreaLight
 {
@@ -297,17 +298,17 @@ float3 DirectionalLight(float3 pos)
 	{
 		float4 cascadeWeights = getCascadeWeights_splitSpheres(pos);
 		//bool inside = dot(cascadeWeights, float4(1,1,1,1)) < 4;
-		float3 samplePos = getShadowCoord(pos, cascadeWeights).xyz;
+		float4 samplePos = getShadowCoord(pos, cascadeWeights).xyzw;
 		//occlusion += inside ? UNITY_SAMPLE_SHADOW(u_CascadedShadowMap, samplePos) : 1.f;
-		#if 1
-		att *= _DirectionalShadowmap.SampleLevel(sampler_DirectionalShadowmap, samplePos.xy, 0).r < samplePos.z;
-		#else
-		float2 shadowmap = _DirectionalShadowmap.SampleLevel(sampler_DirectionalShadowmap, samplePos, 0).xy;
-		att *= ChebyshevUpperBound(shadowmap.xy, samplePos.z);
+		/*#if 0
+			att *= _DirectionalShadowmap.SampleLevel(sampler_DirectionalShadowmap, samplePos.xy, 0).r < samplePos.z;
+		#else*/
+		float2 shadowmap = _DirectionalShadowmap.SampleLevel(sampler_DirectionalShadowmap, samplePos.xy,0).xy;
+		att *= ChebyshevUpperBound(shadowmap.xy, samplePos.z/samplePos.w);
 
 		// float depth = exp(-40.0 * samplePos.z);
 		// att = saturate(shadowmap.r * depth);
-		#endif
+		//#endif
 	}
 	#endif
 

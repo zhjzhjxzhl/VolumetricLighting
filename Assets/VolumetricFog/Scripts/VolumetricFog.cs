@@ -43,8 +43,9 @@ public class VolumetricFog : MonoBehaviour
 	Vector3i m_ScatterNumThreads = new Vector3i(32, 2, 1);
 	RenderTexture m_VolumeInject;
 	RenderTexture m_VolumeScatter;
-	Vector3i m_VolumeResolution = new Vector3i(160, 90, 128);
-	Camera m_Camera;
+    Vector3i m_VolumeResolution = new Vector3i(160, 90, 128);
+    //Vector3i m_VolumeResolution = new Vector3i(96, 54, 64);//在低端的机器上，可以通过降低这个分辨率来提高帧率。不过还是消耗很大的。
+    Camera m_Camera;
 
 	// Density
 	public float m_ConstantFog = 0;
